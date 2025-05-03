@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录/注册</title>
+    <style>
+        .bodystyle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+            display: flex;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 400px;
+            box-sizing: border-box;
+        }
+        .side-left {
+            background: #7F7FD5;  /* fallback for old browsers */
+            background: -webkit-linear-gradient(to bottom right, #91EAE4, #86A8E7, #7F7FD5);  /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to bottom right, #91EAE4, #86A8E7, #7F7FD5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            flex: 1;
+            text-align: center;
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+        .side-left a {
+            color: #fff;
+            text-decoration: none;
+            font-size:50px;text-shadow:-2px 2px #efff00;
+            transform: rotate(-90deg);
+            display:inline-block;margin-top:100px;margin-left:-55px;margin-right:-50px;
+        }
+        .side-left a:hover {
+            text-decoration: underline;
+        }
+        .side-right {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+        }
+        .tab-bar {
+            display: flex;
+            cursor: pointer;margin-top:14px;width:80%;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            background: #d0d0d0;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            border-top: 2px solid #cfcfcf;
+        }
+        .tab.active {
+            background: #f1f1f1;
+            border-top: 2px solid #007bff;
+        }
+        .form-group {
+            display: none;width:90%;
+            padding: 20px 10px;background-color:#f1f1f1;
+            border-bottom-right-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .form-group.active {
+            display: block;
+        }
+        .form-control {
+            width:100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        .error, .success {
+            color: red;
+            margin-top: 10px;
+        }
+        .success {
+            color: green;
+        }
+
+     button {
+      background-color: #00cc00;color:#fef;height:30px;width:80px;border-radius:5px;border:2px solid #339900;border-bottom-width:9px;border-right-width:4px;border-left-width:4px;
+     }
+    </style>
+</head>
+<body class='bodystyle'>
+    <div class="container">
+        <div class="side-left">
+            <a href="#" onclick="window.location.href='index.html'">CodeCMS</a>
+        </div>
+        <div class="side-right">
+            <div class="tab-bar">
+                <div class="tab active" onclick="showForm('login')">登录</div>
+                <div class="tab" onclick="showForm('register')">注册</div>
+            </div>
+            <form id="loginForm" class="form-group active">
+                <input type="text" class="form-control" id="username" placeholder="用户名" required>
+                <input type="password" class="form-control" id="password" placeholder="密码" required>
+                <button type="button" onclick="submitForm('login')">登录</button>
+            </form>
+            <form id="registerForm" class="form-group">
+                <input type="text" class="form-control" id="regUsername" placeholder="用户名" required>
+                <input type="password" class="form-control" id="regPassword" placeholder="密码" required>
+                <input type="password" class="form-control" id="regRepeatPassword" placeholder="重复密码" required>
+                <button type="button" onclick="submitForm('register')">注册</button>
+            </form>
+            <div id="message" class="error"></div>
+        </div>
+    </div>
+
+    <script>
+        function showForm(type) {
+            document.querySelector('.tab-bar .tab.active').classList.remove('active');
+            document.getElementById(type + 'Form').classList.add('active');
+            document.getElementById(type === 'login' ? 'registerForm' : 'loginForm').classList.remove('active');
+            document.querySelector('.tab-bar .tab[onclick="showForm(\'' + type + '\')"]').classList.add('active');
+        }
+
+        function validateForm(type) {
+            let username = type === 'login' ? document.getElementById('username').value : document.getElementById('regUsername').value;
+            let password = type === 'login' ? document.getElementById('password').value : document.getElementById('regPassword').value;
+            let repeatPassword = type === 'login' ? '' : document.getElementById('regRepeatPassword').value;
+            let message = document.getElementById('message');
+            let isValid = true;
+
+            message.textContent = '';
+            message.className = 'error';
+
+            if (!username || !password || (type === 'register' && !repeatPassword)) {
+                message.textContent = '请输入所有字段';
+                isValid = false;
+            } else if (username.length < 4 || username.length > 20) {
+                message.textContent = '用户名长度应为4到20个字符';
+                isValid = false;
+            } else if (password.length < 8 || password.length > 25) {
+                message.textContent = '密码长度应为8到25个字符';
+                isValid = false;
+            } else if (type === 'register' && password !== repeatPassword) {
+                message.textContent = '两次输入的密码不一致';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function submitForm(action) {
+            if (validateForm(action)) {
+                let xhr = new XMLHttpRequest();
+                let formData = new FormData();
+                formData.append('action', action);
+                formData.append('username', action === 'login' ? document.getElementById('username').value : document.getElementById('regUsername').value);
+                formData.append('password', action === 'login' ? document.getElementById('password').value : document.getElementById('regPassword').value);
+
+                xhr.open('POST', 'application/db_api/sign-in-up.php', true);
+                xhr.onload = function () {
+                    let message = document.getElementById('message');
+                    if (xhr.responseText === 'success') {
+                        message.textContent = `${action === 'login' ? '登录' : '注册'}成功！即将转跳至主页...`;
+                        message.className = 'success';
+                        setTimeout(() => window.location.href = 'index.html', 2000);
+                    } else {
+                        message.textContent = xhr.responseText;
+                        message.className = 'error';
+                    }
+                };
+                xhr.send(formData);
+            }
+        }
+    </script>
+</body>
+</html>

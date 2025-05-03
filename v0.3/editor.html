@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- 代码高亮样式（选一个你喜欢的主题，这里用atom-one-dark主题） -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <meta charset="UTF-8">
+    <title>CodeCMS 内容编辑器</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --background:  linear-gradient(to top, #E5E5BE, #003973);
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--background);
+            color: var(--text-color);
+        }
+
+        .editor-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            width: 96%;
+            padding: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .toolbar button {
+            padding: 6px 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin: 2px;
+        }
+
+        .toolbar button:hover {
+            background: var(--secondary-color);
+        }
+
+        #title {
+            width:95%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            resize: none;
+        }
+
+        .editor-wrapper {
+            display: flex;
+            gap: 20px;
+            width: 95%;
+            height: 70vh;
+        }
+
+        .editor-column {
+            flex: 1;
+            height:90%;width:48%;
+        }
+
+        #content {
+            width: 100%;
+            height: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            resize: none;
+            font-family: 'Fira Code', monospace;
+            line-height: 1.6;
+        }
+
+        #preview {
+            width:97%;
+            height: 100%;
+            padding: 15px;margin-left:12px;
+            border: 1px solid #ddd;
+            background: white;
+            overflow: auto;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        #resume {
+            width:95%;
+            height: 10vh;
+            padding: 12px;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+        }
+
+        /* 导航条 */
+        .topnav {
+            overflow: hidden;
+            background-color: #333;
+            top:0;
+            padding:5px;
+            position:sticky;
+            position:-webkit-sticky;
+        }
+        /* 导航条链接 */
+        .topnav a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        /* 链接颜色修改 */
+        .topnav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        /* 响应式布局 -屏幕尺寸小于 400px 时，导航等布局改为上下布局 */
+        @media screen and (max-width: 400px) {
+            .topnav a {
+                float: none;
+                width: 100%;
+            }
+            .editor-wrapper {
+                flex-direction: column;
+                height: auto;
+            }
+            .editor-column {
+                height: 50vh;overflow:auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="topnav">
+        <a href="viewer.html" target="_blank">论坛bbs</a>
+        <a href="editor.html" target="_blank">创作edit</a>
+        <a href="index.html">主页</a>
+        <a href="sign-in-up.html" style="float:right">登陆</a>
+    </div>
+    
+    <form action="application/db_api/submit_post.php" method="POST" class="editor-container">
+        <textarea 
+            id="title"
+            name="title"
+            placeholder="输入标题（最多40个字符）"
+            maxlength="40"
+            required
+        ></textarea>
+
+        <div class="toolbar">
+            <button type="button" onclick="insertText('**', '**')">加粗</button>
+            <button type="button" onclick="insertText('*', '*')">斜体</button>
+            <button type="button" onclick="insertText('~~ ', '~~')">删除线</button>
+            <button type="button" onclick="insertText('# ', '')">H1</button>
+            <button type="button" onclick="insertText('## ', '')">H2</button>
+            <button type="button" onclick="insertText('### ', '')">H3</button>
+            <button type="button" onclick="insertText('#### ', '')">H4</button>
+            <button type="button" onclick="insertText('##### ', '')">H5</button>
+            <button type="button" onclick="insertText('###### ', '')">H6</button>
+            <button type="button" onclick="insertText('\n```\n', '\n```')">代码块</button>
+            <button type="button" onclick="insertText('`', '`')">行内代码</button>
+            <button type="button" onclick="insertText('- ', '')">无序列表</button>
+            <button type="button" onclick="insertText('1. ', '')">有序列表</button>
+            <button type="button" onclick="insertText('\n> ', '')">引用</button>
+            <button type="button" onclick="insertText('[', ']()')">链接</button>
+            <button type="button" onclick="insertText('![', ']()')">图片</button>
+            <button type="button" onclick="insertText('| ', ' |\n|-----|-----|\n| ', ' |')">表格</button>
+            <button type="button" onclick="insertText('\n---\n', '')">分隔线</button>
+        </div>
+        <input style="width:150px;margin-top:5px;margin-bottom:5px;" type="text" name="author" placeholder="作者" minlenth="4" maxlenth="20" required><br>
+        <div class="editor-wrapper">
+            <div class="editor-column">
+                <textarea 
+                    id="content"
+                    name="content"
+                    placeholder="输入内容（支持Markdown语法）"
+                    maxlength="3000"
+                    required
+                    oninput="updatePreview()"
+                ></textarea>
+            </div>
+            <div class="editor-column"><div id="preview"></div></div>
+        </div>
+
+        <textarea 
+            id="resume"
+            name="resume"
+            placeholder="输入文章梗概（可选，最多50字）"
+            maxlength="50"
+        ></textarea>
+
+        <button type="submit">提交文章</button>
+    </form>
+    <!-- 引入Markdown解析库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.5/purify.min.js"></script>
+<!-- highlight.js 核心库 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<!-- 添加语言支持（可选） -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/cpp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/java.min.js"></script>
+    <script>
+        // 初始化Markdown解析器
+marked.setOptions({
+  breaks: true,
+  highlight: function(code, language) {
+    // 如果语言未指定，则自动检测
+    const validLanguage = hljs.getLanguage(language) ? language : 'plaintext';
+    return hljs.highlight(code, { language: validLanguage }).value;
+  }
+});
+
+        // 插入Markdown语法
+        function insertText(before, after) {
+            const textarea = document.getElementById('content');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            const selection = text.substring(start, end);
+            
+            textarea.value = text.substring(0, start) + before + selection + after + text.substring(end);
+            textarea.focus();
+            textarea.selectionStart = start + before.length;
+            textarea.selectionEnd = start + before.length + selection.length;
+            updatePreview();
+        }
+
+        // 更新预览
+function updatePreview() {
+  const rawText = document.getElementById('content').value;
+  const sanitized = DOMPurify.sanitize(marked.parse(rawText));
+  document.getElementById('preview').innerHTML = sanitized;
+  
+  // 新增：手动触发代码块高亮
+  document.querySelectorAll('#preview pre code').forEach((block) => {
+    hljs.highlightElement(block);
+  });
+}
+
+        // 初始预览更新
+        updatePreview();
+    </script>
+</body>
+</html>
