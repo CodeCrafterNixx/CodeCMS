@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Posts Page</title>
+    <style>
+        body {
+            background: #003973;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to bottom, #E5E5BE, #003973);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to bottom, #E5E5BE, #003973); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+        }
+       /* 导航条 */
+			.topnav {
+			overflow: hidden;
+			background-color: #333;
+			top:0;
+			padding:5px;
+			position:sticky;
+			position:-webkit-sticky;
+		}
+		/* 导航条链接 */
+		.topnav a {
+			float: left;
+			display: block;
+			color: #f2f2f2;
+			text-align: center;
+			padding: 14px 16px;
+			text-decoration: none;
+		}
+		/* 链接颜色修改 */
+		.topnav a:hover {
+			background-color: #ddd;
+			color: black;
+		}
+		/* 响应式布局 -屏幕尺寸小于 400px 时，导航等布局改为上下布局 */
+		@media screen and (max-width: 400px) {
+				.topnav a {
+				float: none;
+				width: 100%;
+				}
+		}
+    </style>
+</head>
+<body>
+    <div class="topnav">
+		<a href="viewer.php" target="_blank">论坛bbs</a>
+		<a href="editor.html" target="_blank">创作edit</a>
+		<a href="index.php" target="_self">主页</a>
+		<a href="sign-in-up.html" style="float:right" target="_self">登陆</a>
+	</div>
+<iframe src='application/db_api/BBS.php'height=1050px width=100% frameborder=none></iframe>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Post</title>
+    <style>
+        body {
+            background: #003973;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to top, #E5E5BE, #003973);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to top, #E5E5BE, #003973); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+
+        }
+        /* 导航条 */
+			.topnav {
+			overflow: hidden;
+			background-color: #333;
+			top:0;
+			padding:5px;
+			position:sticky;
+			position:-webkit-sticky;
+		}
+		/* 导航条链接 */
+		.topnav a {
+			float: left;
+			display: block;
+			color: #f2f2f2;
+			text-align: center;
+			padding: 14px 16px;
+			text-decoration: none;
+		}
+		/* 链接颜色修改 */
+		.topnav a:hover {
+			background-color: #ddd;
+			color: black;
+		}
+		/* 响应式布局 -屏幕尺寸小于 400px 时，导航等布局改为上下布局 */
+		@media screen and (max-width: 400px) {
+				.topnav a {
+				float: none;
+				width: 100%;
+				}
+		}
+        .form-container {
+            background-color: white;
+            margin: 20px auto;
+            padding: 20px;
+            width:800px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container input, .form-container textarea {
+            resize:vertical; /* 允许用户垂直调整大小 */
+            overflow: auto; /* 当内容超出区域时显示滚动条 */
+            width:95%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+        }
+        .form-container button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="topnav">
+		<a href="viewer.php" target="_blank">论坛bbs</a>
+		<a href="editor.html" target="_blank">创作edit</a>
+		<a href="index.php">主页</a>
+		<a href="sign-in-up.html" style="float:right">登陆</a>
+	</div>
+    <div class="form-container">
+        <form action="application/db_api/submit_post.php" method="post">
+            <input type="text" name="title" placeholder="文章标题" required><br>
+            <input type="text" name="author" placeholder="作者" required><br>
+            <textarea name="content" placeholder="文章内容" maxlength="3000" height=150px required></textarea><br>
+            <textarea name="resume" placeholder="文章摘要，留空为自动摘要" maxlength="50"></textarea><br>
+            <button type="submit">发表</button>
+        </form>
+    </div>
+</body>
+</html>
